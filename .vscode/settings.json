@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.pl": "prolog",
+        "iostream": "cpp",
+        "*.tcc": "cpp",
+        "functional": "cpp",
+        "chrono": "cpp",
+        "iosfwd": "cpp",
+        "ostream": "cpp"
+    }
+}
