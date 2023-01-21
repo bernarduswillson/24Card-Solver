@@ -2,8 +2,8 @@
 #include <string>
 #include <chrono>
 #include "others\inputCard.cpp"
-#include "algorithm\numbers.cpp"
 #include "algorithm\operators.cpp"
+#include "algorithm\numPermutation.cpp"
 #include "others\saveDat.cpp"
 #include "others\splashScreen.cpp"
 
@@ -39,64 +39,71 @@ int main() {
         }
     }
     auto start = Clock::now();
-    int Cards[4];
-    for (int i = 0; i < 4; i++) {
-        Cards[i] = CardInt[i];
-    }
-    sortArr(CardInt);
     string saveRes[10000] = {};
     int row = 0;
     int count = 0;
     string op1, op2, op3;
-    do {
+    int permRes[24][4];
+    permutation(CardInt[0], CardInt[1], CardInt[2], CardInt[3], permRes, &row);
+    for (int h = 0; h < row; h++) {
         for (int i = 1; i < 5; i++) {
             for (int j = 1; j < 5; j++ ) {
                 for (int k = 1; k < 5; k++) {
                     // ((A _ B) _ C) _ D
-                    if (operators(operators(operators(CardInt[0], CardInt[1], i), CardInt[2], j), CardInt[3], k) == 24) {
-                        string Card1 = to_string(CardInt[0]);
-                        string Card2 = to_string(CardInt[1]);
-                        string Card3 = to_string(CardInt[2]);
-                        string Card4 = to_string(CardInt[3]);
+                    if (operators(operators(operators(permRes[h][0], permRes[h][1], i), permRes[h][2], j), permRes[h][3], k) == 24) {
+                        string Card1 = to_string(permRes[h][0]);
+                        string Card2 = to_string(permRes[h][1]);
+                        string Card3 = to_string(permRes[h][2]);
+                        string Card4 = to_string(permRes[h][3]);
                         opOutput(i, j, k, &op1, &op2, &op3);
                         saveRes[count] = "(("+Card1+" "+op1+" "+Card2+") "+op2+" "+Card3+") "+op3+" "+Card4;
                         count++;
                     }
                     //  (A _ (B _ C)) _ D
-                    if (operators(operators(CardInt[0], operators(CardInt[1], CardInt[2], i), j), CardInt[3], k) == 24) {
-                        string Card1 = to_string(CardInt[0]);
-                        string Card2 = to_string(CardInt[1]);
-                        string Card3 = to_string(CardInt[2]);
-                        string Card4 = to_string(CardInt[3]);
+                    if (operators(operators(permRes[h][0], operators(permRes[h][1], permRes[h][2], i), j), permRes[h][3], k) == 24) {
+                        string Card1 = to_string(permRes[h][0]);
+                        string Card2 = to_string(permRes[h][1]);
+                        string Card3 = to_string(permRes[h][2]);
+                        string Card4 = to_string(permRes[h][3]);
                         opOutput(i, j, k, &op1, &op2, &op3);
                         saveRes[count] = "("+Card1+" "+op2+" ("+Card2+" "+op1+" "+Card3+")) "+op3+" "+Card4;
                         count++;
                     }
                     // (A _ B) _ (C _ D)
-                    if (operators(operators(CardInt[0], CardInt[1], i), operators(CardInt[2], CardInt[3], j), k) == 24) {
-                        string Card1 = to_string(CardInt[0]);
-                        string Card2 = to_string(CardInt[1]);
-                        string Card3 = to_string(CardInt[2]);
-                        string Card4 = to_string(CardInt[3]);
+                    if (operators(operators(permRes[h][0], permRes[h][1], i), operators(permRes[h][2], permRes[h][3], j), k) == 24) {
+                        string Card1 = to_string(permRes[h][0]);
+                        string Card2 = to_string(permRes[h][1]);
+                        string Card3 = to_string(permRes[h][2]);
+                        string Card4 = to_string(permRes[h][3]);
                         opOutput(i, j, k, &op1, &op2, &op3);
                         saveRes[count] = "("+Card1+" "+op1+" "+Card2+") "+op3+" ("+Card3+" "+op2+" "+Card4+")";
                         count++;
                     }
                     // A _ ((B _ C) _ D)
-                    if (operators(CardInt[0], operators(operators(CardInt[1], CardInt[2], i), CardInt[3], j), k) == 24) {
-                        string Card1 = to_string(CardInt[0]);
-                        string Card2 = to_string(CardInt[1]);
-                        string Card3 = to_string(CardInt[2]);
-                        string Card4 = to_string(CardInt[3]);
+                    if (operators(permRes[h][0], operators(operators(permRes[h][1], permRes[h][2], i), permRes[h][3], j), k) == 24) {
+                        string Card1 = to_string(permRes[h][0]);
+                        string Card2 = to_string(permRes[h][1]);
+                        string Card3 = to_string(permRes[h][2]);
+                        string Card4 = to_string(permRes[h][3]);
                         opOutput(i, j, k, &op1, &op2, &op3);
                         saveRes[count] = Card1+" "+op3+" (("+Card2+" "+op1+" "+Card3+") "+op2+" "+Card4+")";
+                        count++;
+                    }
+                    // A _ (B _ (C _ D))
+                    if (operators(permRes[h][0], operators(permRes[h][1], operators(permRes[h][2], permRes[h][3], i), j), k) == 24) {
+                        string Card1 = to_string(permRes[h][0]);
+                        string Card2 = to_string(permRes[h][1]);
+                        string Card3 = to_string(permRes[h][2]);
+                        string Card4 = to_string(permRes[h][3]);
+                        opOutput(i, j, k, &op1, &op2, &op3);
+                        saveRes[count] = ""+Card1+" "+op3+" ("+Card2+" "+op2+" ("+Card3+" "+op1+" "+Card4+"))";
                         count++;
                     }
                 }
             }
         }
-        row += 1;
-    } while (permutation(CardInt));
+    }
+    cout << endl;
     if (count == 0) {
         cout << "==================" << endl;
         cout << "Tidak ada solusi!" << endl;
@@ -116,7 +123,7 @@ int main() {
     cout << "Execution time: " << ms << " milliseconds" << endl;
     cout << "================================" << endl;
     cout << endl;
-    save(saveRes, count, Cards);
+    save(saveRes, count, CardInt);
     string input1;
     bool flag1 = false;
     while (flag1 == false) {
